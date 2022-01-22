@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { FlatList, Keyboard, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import TopNavigation from '../common/TopNavigation';
-import styles, { Container } from './styles';
+import React, { useEffect, useState } from 'react'
+import { FlatList, Keyboard, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import TopNavigation from '../common/TopNavigation'
+import styles, { Container } from './styles'
 import { firebase } from '../../firebase/config'
 
 const HomeScreen = ({ navigation, extraData }) => {
@@ -22,7 +22,7 @@ const HomeScreen = ({ navigation, extraData }) => {
                         const entity = doc.data()
                         entity.id = doc.id
                         newEntities.push(entity)
-                    });
+                    })
                     setEntities(newEntities)
                 },
                 error => {
@@ -33,12 +33,12 @@ const HomeScreen = ({ navigation, extraData }) => {
 
     const onAddButtonPress = () => {
         if (entityText && entityText.length > 0) {
-            const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+            const timestamp = firebase.firestore.FieldValue.serverTimestamp()
             const data = {
                 text: entityText,
                 authorID: userID,
                 createdAt: timestamp,
-            };
+            }
             entityRef
                 .add(data)
                 .then(_doc => {
@@ -47,7 +47,7 @@ const HomeScreen = ({ navigation, extraData }) => {
                 })
                 .catch((error) => {
                     alert(error)
-                });
+                })
         }
     }
 
@@ -92,4 +92,4 @@ const HomeScreen = ({ navigation, extraData }) => {
     )
 }
 
-export default HomeScreen;
+export default HomeScreen

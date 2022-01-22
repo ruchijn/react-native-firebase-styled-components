@@ -1,4 +1,4 @@
-import 'react-native-gesture-handler';
+import 'react-native-gesture-handler'
 import React, { useEffect, useState } from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
@@ -8,15 +8,16 @@ import {decode, encode} from 'base-64'
 if (!global.btoa) {  global.btoa = encode }
 if (!global.atob) { global.atob = decode }
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator()
 
-export default function App() {
+const App = () => {
 
   const [loading, setLoading] = useState(false)
   const [user, setUser] = useState(null)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
-    const usersRef = firebase.firestore().collection('users');
+    const usersRef = firebase.firestore().collection('users')
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         usersRef
@@ -28,15 +29,18 @@ export default function App() {
             setUser(userData)
           })
           .catch((error) => {
+            setError(error)
             setLoading(false)
-          });
+          })
       } else {
         setLoading(false)
       }
-    });
-  }, []);
+    })
+  }, [])
 
   if (loading) return <Text>Loading...</Text>
+
+  if(error) return <Text>{error}</Text>
 
   return (
     <NavigationContainer>
@@ -50,5 +54,7 @@ export default function App() {
           <Stack.Screen name="Registration" component={RegistrationScreen} />
       </Stack.Navigator>
     </NavigationContainer>
-  );
+  )
 }
+
+export default App

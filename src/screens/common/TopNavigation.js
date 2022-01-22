@@ -1,6 +1,6 @@
-import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
-import { firebase } from '../../firebase/config';
+import React from 'react'
+import { Text, TouchableOpacity, View } from 'react-native'
+import { firebase } from '../../firebase/config'
 
 const TopNavigation = ({navigation}) => {
 
@@ -8,7 +8,7 @@ const TopNavigation = ({navigation}) => {
         firebase
             .auth()
             .signOut()
-            .then(() => console.log('User signed out!'));
+            .then(() => console.log('User signed out!'))
         
         navigation.navigate('Login')
     }
@@ -22,4 +22,4 @@ const TopNavigation = ({navigation}) => {
     )
 }
 
-export default TopNavigation;
+export default TopNavigation

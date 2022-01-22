@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import FooterLinks from '../common/FooterLinks'
 import { firebase } from '../../firebase/config'
-import styles from './styles';
+import styles from './styles'
 
 const RegistrationScreen = ({navigation}) => {
     const [fullName, setFullName] = useState('')
@@ -28,7 +29,7 @@ const RegistrationScreen = ({navigation}) => {
                     id: uid,
                     email,
                     fullName,
-                };
+                }
                 const usersRef = firebase.firestore().collection('users')
                 usersRef
                     .doc(uid)
@@ -38,11 +39,11 @@ const RegistrationScreen = ({navigation}) => {
                     })
                     .catch((error) => {
                         alert(error)
-                    });
+                    })
             })
             .catch((error) => {
                 alert(error)
-        });
+        })
     }
 
     return (
@@ -97,14 +98,11 @@ const RegistrationScreen = ({navigation}) => {
                     onPress={() => onRegisterPress()}>
                     <Text style={styles.buttonTitle}>Create account</Text>
                 </TouchableOpacity>
-                <View style={styles.footerView}>
-                    <Text style={styles.footerText}>Already registered with us?</Text>
-                    <Text><Text onPress={onFooterLinkPress} style={styles.footerLink}>Click here</Text> to login</Text>
-                </View>
+                <FooterLinks navigation={navigation} showLogin />
             </KeyboardAwareScrollView>
         </View>
     )
-};
+}
 
-export default RegistrationScreen;
+export default RegistrationScreen
 

@@ -1,16 +1,13 @@
 import React, { useState } from 'react'
 import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import FooterLinks from '../common/FooterLinks'
 import { firebase } from '../../firebase/config'
-import styles from './styles';
+import styles from './styles'
 
 const LoginScreen = ({navigation}) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-
-    const onFooterLinkPress = () => {
-        navigation.navigate('Registration')
-    }
 
     const onLoginPress = () => {
         firebase
@@ -25,16 +22,16 @@ const LoginScreen = ({navigation}) => {
                     .then(firestoreDocument => {
                         if (!firestoreDocument.exists) {
                             alert("User does not exist anymore.")
-                            return;
+                            return
                         }
                         const user = firestoreDocument.data()
                         setTimeout(() => {
-                            navigation.navigate('Home', {user});
-                        }, 1000);
+                            navigation.navigate('Home', {user})
+                        }, 1000)
                     })
                     .catch(error => {
                         alert(error)
-                    });
+                    })
             })
             .catch(error => {
                 alert(error)
@@ -74,12 +71,10 @@ const LoginScreen = ({navigation}) => {
                     onPress={() => onLoginPress()}>
                     <Text style={styles.buttonTitle}>Log in</Text>
                 </TouchableOpacity>
-                <View style={styles.footerView}>
-                    <Text style={styles.footerText}>Don't have an account? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Register here</Text></Text>
-                </View>
+                <FooterLinks navigation={navigation} showLogin={false} />
             </KeyboardAwareScrollView>
         </View>
     )
 }
 
-export default LoginScreen;
+export default LoginScreen
