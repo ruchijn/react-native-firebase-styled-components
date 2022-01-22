@@ -1,30 +1,94 @@
-import React from 'react'
-import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import styles from './styles';
+import React, { useEffect, useState } from 'react';
+import { FlatList, Keyboard, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import TopNavigation from '../common/TopNavigation';
+import styles, { Container } from './styles';
+import { firebase } from '../../firebase/config'
 
-const HomeScreen = ({navigation}) => {
-    const onFooterLinkPress = (pageName) => {
-        navigation.navigate({ name: pageName })
+const HomeScreen = ({ navigation, extraData }) => {
+    const [entityText, setEntityText] = useState('')
+    const [entities, setEntities] = useState([])
+
+    const entityRef = firebase.firestore().collection('entities')
+    const userID = extraData.id
+
+    useEffect(() => {
+        entityRef
+            .where("authorID", "==", userID)
+            .orderBy('createdAt', 'desc')
+            .onSnapshot(
+                querySnapshot => {
+                    const newEntities = []
+                    querySnapshot.forEach(doc => {
+                        const entity = doc.data()
+                        entity.id = doc.id
+                        newEntities.push(entity)
+                    });
+                    setEntities(newEntities)
+                },
+                error => {
+                    console.log(error)
+                }
+            )
+    }, [])
+
+    const onAddButtonPress = () => {
+        if (entityText && entityText.length > 0) {
+            const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+            const data = {
+                text: entityText,
+                authorID: userID,
+                createdAt: timestamp,
+            };
+            entityRef
+                .add(data)
+                .then(_doc => {
+                    setEntityText('')
+                    Keyboard.dismiss()
+                })
+                .catch((error) => {
+                    alert(error)
+                });
+        }
+    }
+
+    const renderEntity = ({item, index}) => {
+        return (
+            <View style={styles.entityContainer}>
+                <Text style={styles.entityText}>
+                    {index}. {item.text}
+                </Text>
+            </View>
+        )
     }
 
     return (
-        <View style={styles.container}>
-            <KeyboardAwareScrollView
-                style={{ flex: 1, width: '100%' }}
-                keyboardShouldPersistTaps="always">
-                <Image
-                    style={styles.logo}
-                    source={require('../../../assets/logo.png')}
+        <Container>
+            <TopNavigation navigation={navigation} />
+            <View style={styles.formContainer}>
+                <TextInput
+                    style={styles.input}
+                    placeholder='Add new entity'
+                    placeholderTextColor="#aaaaaa"
+                    onChangeText={(text) => setEntityText(text)}
+                    value={entityText}
+                    underlineColorAndroid="transparent"
+                    autoCapitalize="none"
                 />
-                <Text>This is home screen</Text>
-                <View style={styles.footerView}>
-                    <Text style={styles.footerText}>Already registered with us?</Text>
-                    <Text><Text onPress={() => onFooterLinkPress('Login')} style={styles.footerLink}>Click here</Text> to login</Text>
-                    <Text style={styles.footerText}>Don't have an account? <Text onPress={() => onFooterLinkPress('Registration')} style={styles.footerLink}>Register here</Text></Text>
+                <TouchableOpacity style={styles.button} onPress={onAddButtonPress}>
+                    <Text style={styles.buttonText}>Add</Text>
+                </TouchableOpacity>
+            </View>
+            { entities && (
+                <View style={styles.listContainer}>
+                    <FlatList
+                        data={entities}
+                        renderItem={renderEntity}
+                        keyExtractor={(item) => item.id}
+                        removeClippedSubviews={true}
+                    />
                 </View>
-            </KeyboardAwareScrollView>
-        </View>
+            )}
+        </Container>
     )
 }
 
