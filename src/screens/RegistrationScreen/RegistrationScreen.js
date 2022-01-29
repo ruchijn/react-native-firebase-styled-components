@@ -1,19 +1,14 @@
 import React, { useState } from 'react'
-import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import FooterLinks from '../common/FooterLinks'
 import { firebase } from '../../firebase/config'
-import styles from './styles'
+import { AppView, TextInput, TouchableOpacityButton, TouchableOpacityButtonText, LogoImage } from '../styles'
 
-const RegistrationScreen = ({navigation}) => {
+const RegistrationScreen = ({ navigation, theme }) => {
     const [fullName, setFullName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
-
-    const onFooterLinkPress = () => {
-        navigation.navigate('Login')
-    }
 
     const onRegisterPress = () => {
         if (password !== confirmPassword) {
@@ -35,7 +30,7 @@ const RegistrationScreen = ({navigation}) => {
                     .doc(uid)
                     .set(data)
                     .then(() => {
-                        navigation.navigate('Home', {user: data})
+                        navigation.navigate('Home1', {user: data})
                     })
                     .catch((error) => {
                         alert(error)
@@ -47,16 +42,15 @@ const RegistrationScreen = ({navigation}) => {
     }
 
     return (
-        <View style={styles.container}>
+        <AppView>
             <KeyboardAwareScrollView
                 style={{ flex: 1, width: '100%' }}
                 keyboardShouldPersistTaps="always">
-                <Image
-                    style={styles.logo}
+                <LogoImage
                     source={require('../../../assets/logo.png')}
                 />
                 <TextInput
-                    style={styles.input}
+                    theme={theme}
                     placeholder='Full Name'
                     placeholderTextColor="#aaaaaa"
                     onChangeText={(text) => setFullName(text)}
@@ -65,7 +59,7 @@ const RegistrationScreen = ({navigation}) => {
                     autoCapitalize="none"
                 />
                 <TextInput
-                    style={styles.input}
+                    theme={theme}
                     placeholder='E-mail'
                     placeholderTextColor="#aaaaaa"
                     onChangeText={(text) => setEmail(text)}
@@ -74,7 +68,7 @@ const RegistrationScreen = ({navigation}) => {
                     autoCapitalize="none"
                 />
                 <TextInput
-                    style={styles.input}
+                    theme={theme}
                     placeholderTextColor="#aaaaaa"
                     secureTextEntry
                     placeholder='Password'
@@ -84,7 +78,7 @@ const RegistrationScreen = ({navigation}) => {
                     autoCapitalize="none"
                 />
                 <TextInput
-                    style={styles.input}
+                    theme={theme}
                     placeholderTextColor="#aaaaaa"
                     secureTextEntry
                     placeholder='Confirm Password'
@@ -93,14 +87,13 @@ const RegistrationScreen = ({navigation}) => {
                     underlineColorAndroid="transparent"
                     autoCapitalize="none"
                 />
-                <TouchableOpacity
-                    style={styles.button}
+                <TouchableOpacityButton
                     onPress={() => onRegisterPress()}>
-                    <Text style={styles.buttonTitle}>Create account</Text>
-                </TouchableOpacity>
+                    <TouchableOpacityButtonText>Create account</TouchableOpacityButtonText>
+                </TouchableOpacityButton>
                 <FooterLinks navigation={navigation} showLogin />
             </KeyboardAwareScrollView>
-        </View>
+        </AppView>
     )
 }
 

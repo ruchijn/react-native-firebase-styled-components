@@ -1,23 +1,22 @@
 import React from 'react'
-import { Text, View } from 'react-native'
-import styles from '../styles'
+import { FooterView, FooterText, FooterLink } from '../styles'
 
-const FooterLinks = ({ showLogin, navigation}) => {
+const FooterLinks = ({ showLogin, navigation, theme }) => {
     const onFooterLinkPress = (pageName) => {
         navigation.navigate(pageName)
     }
 
     return (
-        <View style={styles.footerView}>
+        <FooterView theme={theme}>
             {showLogin ? (
                 <>
-                    <Text style={styles.footerText}>Already registered with us?</Text>
-                    <Text><Text onPress={() => onFooterLinkPress('Login')} style={styles.footerLink}>Click here</Text> to login</Text>
+                    <FooterText theme={theme}>Already registered with us?</FooterText>
+                    <FooterText theme={theme}><FooterLink onPress={() => onFooterLinkPress('Login')}>Click here</FooterLink> to login</FooterText>
                 </>
             ) : (
-                <Text style={styles.footerText}>Don't have an account? <Text onPress={() => onFooterLinkPress('Registration')} style={styles.footerLink}>Register here</Text></Text>
+                <FooterText theme={theme}>Don't have an account? <FooterLink onPress={() => onFooterLinkPress('Registration')}>Register here</FooterLink></FooterText>
             )}
-        </View>
+        </FooterView>
     )
 }
 

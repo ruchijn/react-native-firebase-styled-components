@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
-import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { connect, useDispatch } from 'react-redux'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { setUser } from '../../actions/user'
 import FooterLinks from '../common/FooterLinks'
 import { firebase } from '../../firebase/config'
-import styles from './styles'
+import { AppView, TextInput, TouchableOpacityButton, TouchableOpacityButtonText, LogoImage } from '../styles'
 
-const LoginScreen = ({navigation}) => {
+const LoginScreen = ({ navigation, theme }) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const dispatch = useDispatch()
 
     const onLoginPress = () => {
         firebase
@@ -25,8 +27,9 @@ const LoginScreen = ({navigation}) => {
                             return
                         }
                         const user = firestoreDocument.data()
+                        dispatch(setUser(user))
                         setTimeout(() => {
-                            navigation.navigate('Home', {user})
+                            navigation.navigate('Home1', {user})
                         }, 1000)
                     })
                     .catch(error => {
@@ -39,16 +42,15 @@ const LoginScreen = ({navigation}) => {
     }
 
     return (
-        <View style={styles.container}>
+        <AppView>
             <KeyboardAwareScrollView
                 style={{ flex: 1, width: '100%' }}
                 keyboardShouldPersistTaps="always">
-                <Image
-                    style={styles.logo}
+                <LogoImage
                     source={require('../../../assets/logo.png')}
                 />
                 <TextInput
-                    style={styles.input}
+                    theme={theme}
                     placeholder='E-mail'
                     placeholderTextColor="#aaaaaa"
                     onChangeText={(text) => setEmail(text)}
@@ -57,7 +59,7 @@ const LoginScreen = ({navigation}) => {
                     autoCapitalize="none"
                 />
                 <TextInput
-                    style={styles.input}
+                    theme={theme}
                     placeholderTextColor="#aaaaaa"
                     secureTextEntry
                     placeholder='Password'
@@ -66,15 +68,19 @@ const LoginScreen = ({navigation}) => {
                     underlineColorAndroid="transparent"
                     autoCapitalize="none"
                 />
-                <TouchableOpacity
-                    style={styles.button}
+                <TouchableOpacityButton
                     onPress={() => onLoginPress()}>
-                    <Text style={styles.buttonTitle}>Log in</Text>
-                </TouchableOpacity>
-                <FooterLinks navigation={navigation} showLogin={false} />
+                    <TouchableOpacityButtonText>Log in</TouchableOpacityButtonText>
+                </TouchableOpacityButton>
+                <FooterLinks navigation={navigation} showLogin={false} theme={theme} />
             </KeyboardAwareScrollView>
-        </View>
+        </AppView>
     )
 }
 
-export default LoginScreen
+
+const mapStateToProps = ({ theme }) => ({
+    theme
+})
+
+export default connect(mapStateToProps)(LoginScreen)

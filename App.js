@@ -2,6 +2,11 @@ import 'react-native-gesture-handler'
 import React, { useEffect, useState } from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
+import { Provider } from 'react-redux'
+import { createStore, applyMiddleware, combineReducers } from 'redux'
+import thunk from 'redux-thunk'
+import ThemeWrapper from './src/screens/common/ThemeWrapper'
+import reducers from './src/reducers'
 import { firebase } from './src/firebase/config'
 import { LoginScreen, HomeScreen, RegistrationScreen } from './src/screens'
 import {decode, encode} from 'base-64'
@@ -10,8 +15,12 @@ if (!global.atob) { global.atob = decode }
 
 const Stack = createStackNavigator()
 
-const App = () => {
+const store = createStore(
+  reducers,
+  applyMiddleware(thunk)
+)
 
+const App = () => {
   const [loading, setLoading] = useState(false)
   const [user, setUser] = useState(null)
   const [error, setError] = useState(null)
@@ -44,15 +53,19 @@ const App = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        {user && (
-            <Stack.Screen name="Home">
-              {props => <HomeScreen {...props} extraData={user} />}
-            </Stack.Screen>
-        )}
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Registration" component={RegistrationScreen} />
-      </Stack.Navigator>
+      <Provider store={store}>
+        <ThemeWrapper>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            {user && (
+                <Stack.Screen name="Home1">
+                  {props => <HomeScreen {...props} extraData={user} />}
+                </Stack.Screen>
+            )}
+              <Stack.Screen name="Login" component={LoginScreen} />
+              <Stack.Screen name="Registration" component={RegistrationScreen} />
+          </Stack.Navigator>
+        </ThemeWrapper>
+      </Provider>
     </NavigationContainer>
   )
 }
